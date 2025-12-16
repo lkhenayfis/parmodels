@@ -1,11 +1,19 @@
 Package: parmodels
-Title: What the Package Does (One Line, Title Case)
+Title: Conjunto de funcionalidades para estimacao e uso de modelos autorregressivos periodicos
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    person("Lucas", "Khenayfis", , "lucaskhenayfis@gmail.com", role = c("aut", "cre"))
+Description: Este pacote contem toda a funcionalidade necessaria para estimacao, incluindo selecao
+    de ordem automatica, e uso de modelos autorregressivos periodicos (PAR). Funcoes para computo e
+    visualizacao das autocorrelacoes (comuns e parciais) periodicas (PACF) sao tambem
+    disponibilizadas. Modelos do tipo PAR-A, com componente anual, tambem sao suportados, bem como
+    as funcoes de autocorrelacao condicionais envolvidas na sua estimacao.
+Depends: 
+    R (>= 4.0)
+Imports: 
+    stats (>= 4.0),
+    utils (>= 4.0)
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
