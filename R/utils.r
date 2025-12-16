@@ -81,3 +81,41 @@ seasonal_sd <- function(serie, est = "n") {
     sds <- sapply(splitted, function(x) fsd(x, na.rm = TRUE))
     return(sds)
 }
+
+#' Padding De Serie Temporal
+#' 
+#' Preenche uma serie temporal com NA no inicio e no fim para completar ciclos sazonais
+#' 
+#' @param serie serie temporal a ser preenchida
+#' @param pad valor a ser utilizado para preencher as pontas (default: NA)
+#' 
+#' @return serie temporal preenchida com NA nas pontas
+
+pad_series <- function(serie, pad = NA) {
+    tsp   <- tsp(serie)
+    freq  <- frequency(serie)
+    season <- cycle(serie)
+
+    deltaini <- head(season, 1) - 1
+    deltafim <- freq - tail(season, 1)
+
+    padini <- rep(pad, deltaini)
+    padfim <- rep(pad, deltafim)
+
+    out <- ts(c(padini, serie, padfim), start = tsp[1] - (deltaini) / tsp[3], freq = tsp[3])
+    return(out)
+}
+
+#' Converte Serie Temporal em Matriz
+#' 
+#' Converte uma serie temporal em matriz, preenchendo com NA nas pontas para completar ciclos sazon
+#' 
+#' @param serie serie temporal a ser convertida
+#' 
+#' @return matriz com as observacoes organizadas por linhas de ciclos sazonais
+
+ts2matrix <- function(serie) {
+    dat <- pad_series(serie)
+    out <- matrix(dat, ncol = frequency(serie), byrow = TRUE)
+    return(out)
+}
