@@ -6,6 +6,16 @@
 \usage{
 idordem_yulewalker(serie, m, max_p)
 }
+\arguments{
+\item{serie}{serie temporal sazonal}
+
+\item{m}{estacao do ano para a qual identificar a ordem}
+
+\item{max_p}{numero maximo de lags a considerar}
+}
+\value{
+ordem identificada
+}
 \description{
 Funcao interna para identificar automaticamente a ordem de modelos autorregressivos periodicos
 }

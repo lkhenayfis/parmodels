@@ -6,6 +6,25 @@
 \usage{
 new_par(x, phis, sigma2, residuals, call)
 }
+\arguments{
+\item{x}{serie temporal utilizada na estimacao}
+
+\item{phis}{lista contendo os coeficientes de cada modelo autorregressivo periodico}
+
+\item{sigma2}{variancia dos residuos do modelo}
+
+\item{residuals}{residuos do modelo}
+
+\item{call}{chamada da funcao}
+}
+\value{
+objeto da classe \code{par}, uma lista contendo os seguintes elementos:
+* \code{phis}: lista contendo os coeficientes de cada modelo autorregressivo periodico
+* \code{sigma2}: variancia dos residuos do modelo
+* \code{x}: serie temporal utilizada na estimacao
+* \code{residuals}: residuos do modelo
+* \code{call}: chamada da funcao
+}
 \description{
 Funcao interna para construcao de objetos da classe \code{par}
 }

@@ -25,14 +25,12 @@ perpacf(
 }
 \value{
 objeto da classe \code{periodic_pacf}, uma lista contendo os seguintes elementos:
-\itemize{
-\item{phi}{vetor com os valores da PACF periodica}
-\item{n.used}{numero de observacoes utilizadas no calculo}
-\item{m}{estacao do ano para a qual a PACF foi calculada}
-\item{lag_max}{numero maximo de lags considerados}
-\item{rho}{vetor com os valores da funcao de autocorrelacao (ACF) periodica}
-\item{RHO}{matriz com os valores da matriz de autocorrelacao (ACF) periodica}
-}
+* \code{phi}: vetor com os valores da PACF periodica
+* \code{n.used}: numero de observacoes utilizadas no calculo
+* \code{m}: estacao do ano para a qual a PACF foi calculada
+* \code{lag_max}: numero maximo de lags considerados
+* \code{rho}: vetor com os valores da funcao de autocorrelacao (ACF) periodica
+* \code{RHO}: matriz com os valores da matriz de autocorrelacao (ACF) periodica
 }
 \description{
 Calcula a funcao de autocorrelacao parcial periodica (PACF) de uma serie temporal sazonal

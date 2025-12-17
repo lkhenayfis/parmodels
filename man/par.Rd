@@ -18,12 +18,10 @@ automatica}
 }
 \value{
 objeto da classe \code{par}, uma lista contendo os seguintes elementos:
-\itemize{
-\item{phis}{lista contendo os coeficientes de cada modelo autorregressivo periodico}
-\item{sigma2}{variancia dos residuos do modelo}
-\item{serie}{serie temporal utilizada na estimacao}
-\item{call}{chamada da funcao}
-}
+* \code{phis}: lista contendo os coeficientes de cada modelo autorregressivo periodico
+* \code{sigma2}: variancia dos residuos do modelo
+* \code{x}: serie temporal utilizada na estimacao
+* \code{call}: chamada da funcao
 }
 \description{
 Estimacao de modelos autorregressivos periodicos

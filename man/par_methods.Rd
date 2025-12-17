@@ -19,6 +19,8 @@
 \item{object}{objeto da classe \code{par} contendo o modelo ajustado}
 
 \item{...}{argumentos adicionais}
+
+\item{n.ahead}{numero de passos a frente a serem previstos}
 }
 \value{
 varios, dependendo do metodo

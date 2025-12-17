@@ -9,14 +9,12 @@
 #' @param plot se TRUE, plota a PACF periodica
 #'
 #' @return objeto da classe `periodic_pacf`, uma lista contendo os seguintes elementos:
-#'     \itemize{
-#'         \item{phi}{vetor com os valores da PACF periodica}
-#'         \item{n.used}{numero de observacoes utilizadas no calculo}
-#'         \item{m}{estacao do ano para a qual a PACF foi calculada}
-#'         \item{lag_max}{numero maximo de lags considerados}
-#'         \item{rho}{vetor com os valores da funcao de autocorrelacao (ACF) periodica}
-#'         \item{RHO}{matriz com os valores da matriz de autocorrelacao (ACF) periodica}
-#'     }
+#'     * `phi`: vetor com os valores da PACF periodica
+#'     * `n.used`: numero de observacoes utilizadas no calculo
+#'     * `m`: estacao do ano para a qual a PACF foi calculada
+#'     * `lag_max`: numero maximo de lags considerados
+#'     * `rho`: vetor com os valores da funcao de autocorrelacao (ACF) periodica
+#'     * `RHO`: matriz com os valores da matriz de autocorrelacao (ACF) periodica
 #' 
 #' @export
 

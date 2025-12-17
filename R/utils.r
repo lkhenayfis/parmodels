@@ -103,7 +103,7 @@ pad_series <- function(serie, pad = NA) {
     padini <- rep(pad, deltaini)
     padfim <- rep(pad, deltafim)
 
-    out <- ts(c(padini, serie, padfim), start = tsp[1] - (deltaini) / tsp[3], freq = tsp[3])
+    out <- ts(c(padini, serie, padfim), start = tsp[1] - (deltaini) / tsp[3], frequency = tsp[3])
     return(out)
 }
 

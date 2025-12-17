@@ -16,12 +16,10 @@
 #' @param metodo metodo de estimacao. Atualmente, apenas "Yule-Walker" é suportado
 #' 
 #' @return objeto da classe `par`, uma lista contendo os seguintes elementos:
-#'    \itemize{
-#'        \item{phis}{lista contendo os coeficientes de cada modelo autorregressivo periodico}
-#'        \item{sigma2}{variancia dos residuos do modelo}
-#'        \item{serie}{serie temporal utilizada na estimacao}
-#'        \item{call}{chamada da funcao}
-#'   }
+#'     * `phis`: lista contendo os coeficientes de cada modelo autorregressivo periodico
+#'     * `sigma2`: variancia dos residuos do modelo
+#'     * `x`: serie temporal utilizada na estimacao
+#'     * `call`: chamada da funcao
 #' 
 #' @export
 
@@ -66,6 +64,19 @@ fit_par_yulewalker <- function(serie, m, p, max_p, ...) {
 #' Construtor Interno De `par`
 #' 
 #' Funcao interna para construcao de objetos da classe `par`
+#' 
+#' @param x serie temporal utilizada na estimacao
+#' @param phis lista contendo os coeficientes de cada modelo autorregressivo periodico
+#' @param sigma2 variancia dos residuos do modelo
+#' @param residuals residuos do modelo
+#' @param call chamada da funcao
+#' 
+#' @return objeto da classe `par`, uma lista contendo os seguintes elementos:
+#'     * `phis`: lista contendo os coeficientes de cada modelo autorregressivo periodico
+#'     * `sigma2`: variancia dos residuos do modelo
+#'     * `x`: serie temporal utilizada na estimacao
+#'     * `residuals`: residuos do modelo
+#'     * `call`: chamada da funcao
 
 new_par <- function(x, phis, sigma2, residuals, call) {
     new <- list(
@@ -86,6 +97,7 @@ new_par <- function(x, phis, sigma2, residuals, call) {
 #' Metodos S3 para objetos da classe `par`
 #' 
 #' @param object objeto da classe `par` contendo o modelo ajustado
+#' @param n.ahead numero de passos a frente a serem previstos
 #' @param ... argumentos adicionais
 #' 
 #' @return varios, dependendo do metodo
@@ -139,6 +151,12 @@ predict.par <- function(object, n.ahead, ...) {
 #' Identificacao Automatica De Ordem De Modelos Autorregressivos Periodicos
 #' 
 #' Funcao interna para identificar automaticamente a ordem de modelos autorregressivos periodicos
+#' 
+#' @param serie serie temporal sazonal
+#' @param m estacao do ano para a qual identificar a ordem
+#' @param max_p numero maximo de lags a considerar
+#' 
+#' @return ordem identificada
 
 idordem_yulewalker <- function(serie, m, max_p) {
     serie <- scale_by_season(serie, est = "n")[[1]]
