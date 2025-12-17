@@ -2,6 +2,7 @@
 
 S3method(fitted,par)
 S3method(fitted,values.par)
+S3method(plot,periodic_pacf)
 S3method(predict,par)
 S3method(residuals,par)
 export(par)
