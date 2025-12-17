@@ -10,8 +10,11 @@
 #' @return desvio padrao calculado
 
 sd2 <- function(x, na.rm = FALSE) {
+    if (na.rm) {
+        x <- x[!is.na(x)]
+    }
     n <- length(x)
-    sqrt((n - 1) / n) * sd(x, na.rm)
+    sqrt((n - 1) / n) * sd(x)
 }
 
 #' Calculo da covariancia normalizada por 1/n
@@ -73,14 +76,14 @@ scale_by_season <- function(serie, est = "n", means = NULL, sds = NULL) {
 seasonal_mean <- function(serie) {
     splitted <- split_by_season(serie)
     means <- sapply(splitted, function(x) mean(x, na.rm = TRUE))
-    return(means)
+    return(unname(means))
 }
 
 seasonal_sd <- function(serie, est = "n") {
     fsd <- ifelse(est == "n-1", sd, sd2)
     splitted <- split_by_season(serie)
     sds <- sapply(splitted, function(x) fsd(x, na.rm = TRUE))
-    return(sds)
+    return(unname(sds))
 }
 
 #' Padding De Serie Temporal
