@@ -17,6 +17,8 @@
 #'         \item{rho}{vetor com os valores da funcao de autocorrelacao (ACF) periodica}
 #'         \item{RHO}{matriz com os valores da matriz de autocorrelacao (ACF) periodica}
 #'     }
+#' 
+#' @export
 
 perpacf <- function(serie, m, lag_max = frequency(serie) - 1, est = c("n", "n-1"), plot = FALSE) {
     est <- match.arg(est)

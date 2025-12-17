@@ -22,6 +22,8 @@
 #'        \item{serie}{serie temporal utilizada na estimacao}
 #'        \item{call}{chamada da funcao}
 #'   }
+#' 
+#' @export
 
 par <- function(serie, ps = "auto", max_ps = frequency(serie) - 1, metodo = "YuleWalker") {
 
@@ -79,6 +81,19 @@ new_par <- function(x, phis, sigma2, residuals, call) {
 
 # METODOS ------------------------------------------------------------------------------------------
 
+#' Metodos De Modelos `par`
+#' 
+#' Metodos S3 para objetos da classe `par`
+#' 
+#' @param object objeto da classe `par` contendo o modelo ajustado
+#' @param ... argumentos adicionais
+#' 
+#' @return varios, dependendo do metodo
+#' 
+#' @rdname par_methods
+#' 
+#' @export
+
 fitted.par <- function(object, ...) {
     if (!is.null(residuals(object))) {
         res <- residuals(object)
@@ -90,7 +105,15 @@ fitted.par <- function(object, ...) {
     return(fitted)
 }
 
+#' @rdname par_methods
+#' 
+#' @export
+
 fitted.values.par <- function(object, ...) fitted.par(object, ...)
+
+#' @rdname par_methods
+#' 
+#' @export
 
 residuals.par <- function(object, ...) {
     if (is.null(object$residuals)) {
@@ -102,6 +125,10 @@ residuals.par <- function(object, ...) {
 
     return(res)
 }
+
+#' @rdname par_methods
+#' 
+#' @export
 
 predict.par <- function(object, n.ahead, ...) {
     predict_series(object, n.ahead)

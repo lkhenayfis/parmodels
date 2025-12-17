@@ -123,6 +123,14 @@ ts2matrix <- function(serie) {
 
 # AUXILIARES DE MODELO -----------------------------------------------------------------------------
 
+#' Filtra Serie Temporal Com Modelo PAR
+#' 
+#' Filtra uma serie temporal utilizando um modelo PAR ajustado
+#' 
+#' @param object objeto da classe `par` contendo o modelo ajustado
+#' 
+#' @return serie temporal filtrada
+
 filter_series <- function(object) {
     x <- scale_by_season(object$x)
     scales <- x[[2]]
@@ -145,6 +153,15 @@ filter_series <- function(object) {
 
     return(fitted)
 }
+
+#' Previsao Com Modelo PAR
+#' 
+#' Realiza previsao de uma serie temporal utilizando um modelo PAR ajustado
+#' 
+#' @param object objeto da classe `par` contendo o modelo ajustado
+#' @param n.ahead numero de periodos a serem previstos
+#' 
+#' @return serie temporal contendo as previsoes
 
 predict_series <- function(object, n.ahead) {
     x <- scale_by_season(object$x)
