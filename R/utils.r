@@ -1,3 +1,4 @@
+# UTILS GERAIS -------------------------------------------------------------------------------------
 
 #' Calculo do desvio padrao normalizado por 1/n
 #'
@@ -65,7 +66,7 @@ scale_by_season <- function(serie, est = "n", means = NULL, sds = NULL) {
 
     attributes(serie) <- attr0
 
-    out <- list(serie, c(means, sds))
+    out <- list(serie, list(means, sds))
     return(out)
 }
 
@@ -118,4 +119,60 @@ ts2matrix <- function(serie) {
     dat <- pad_series(serie)
     out <- matrix(dat, ncol = frequency(serie), byrow = TRUE)
     return(out)
+}
+
+# AUXILIARES DE MODELO -----------------------------------------------------------------------------
+
+filter_series <- function(object) {
+    x <- scale_by_season(object$x)
+    scales <- x[[2]]
+    x <- x[[1]]
+
+    s <- frequency(x)
+    n <- length(x)
+    fitted <- rep(NA_real_, n)
+
+    for (t in seq_len(n)) {
+        m <- cycle(x)[t]
+        p <- length(object$phis[[m]])
+        if (t > p) {
+            fitted[t] <- sum(object$phis[[m]] * rev(x[(t - p):(t - 1)]), na.rm = TRUE) *
+                scales[[2]][m] + scales[[1]][m]
+        }
+    }
+
+    fitted <- ts(fitted, start = start(x), frequency = s)
+
+    return(fitted)
+}
+
+predict_series <- function(object, n.ahead) {
+    x <- scale_by_season(object$x)
+    scales <- x[[2]]
+    x <- x[[1]]
+
+    s <- frequency(x)
+    n <- length(x)
+    preds <- ts(rep(NA_real_, n.ahead), start = tail(time(x), 1) + 1 / s, frequency = s)
+
+    for (h in seq_len(n.ahead)) {
+        t <- n + h
+        m <- cycle(preds)[h]
+        p <- length(object$phis[[m]])
+        if (h > p) {
+            vals <- preds[(h - p):(h - 1)]
+        } else {
+            vals <- c(x, head(preds, h - 1))[(t - p):(t - 1)]
+        }
+        preds[h] <- sum(object$phis[[m]] * rev(vals), na.rm = TRUE)
+    }
+
+    for (h in seq_len(n.ahead)) {
+        m <- cycle(preds)[h]
+        preds[h] <- preds[h] * scales[[2]][m] + scales[[1]][m]
+    }
+
+    preds <- ts(preds, start = end(x) + c(0, 1), frequency = s)
+
+    return(preds)
 }
