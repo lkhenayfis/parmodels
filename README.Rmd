@@ -1,0 +1,54 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+
+# parmodels
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+Este pacote contem toda a funcionalidade necessaria para estimacao, incluindo selecao
+de ordem automatica, e uso de modelos autorregressivos periodicos (PAR). Funcoes para computo e
+visualizacao das autocorrelacoes (comuns e parciais) periodicas (PACF) sao tambem
+disponibilizadas. Modelos do tipo PAR-A, com componente anual, tambem sao suportados, bem como
+as funcoes de autocorrelacao condicionais envolvidas na sua estimacao.
+
+## Instalacao
+
+A versao de desenvolvimento do pacote pode ser instalada a partir de [GitHub](https://github.com/):
+
+``` r
+# install.packages("remotes")
+remotes::install_github("lkhenayfis/parmodels")
+```
+
+## Exemplo
+
+A seguir esta um exemplo simples de estimacao de modelo e previsao para um caso simples, utilizando
+dados internos do pacote:
+
+```{r, eval=TRUE}
+library(parmodels)
+
+serie <- dummyseries[, 2]
+modelo <- par(serie, max_p = 3)
+
+plot(serie)
+lines(fitted(modelo), col = "red")
+
+preds <- predict(modelo, n.ahead = 12)
+plot(serie, xlim = c(2018, 2023))
+lines(preds, col = "blue")
+```
