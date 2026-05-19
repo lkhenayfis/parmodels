@@ -21,3 +21,13 @@ plot.periodic_pacf <- function(x, ...) {
     abline(h = 0)
     abline(h = c(-conf, conf), lty = 2, col = "blue")
 }
+
+#' @export
+
+plot_simulation <- function(simul, predicted = NULL, ref = NULL) {
+    plot(simul[, 1], ylim = range(simul), col = 4)
+    for (i in seq_len(ncol(simul))[-1]) lines(simul[, i], col = 4)
+
+    if (!is.null(ref)) lines(ref, lty = 1, col = 2)
+    if (!is.null(predicted)) lines(predicted, lty = 2, col = 1)
+}

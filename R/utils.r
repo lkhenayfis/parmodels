@@ -166,10 +166,20 @@ filter_series <- function(object) {
 #' 
 #' @return serie temporal contendo as previsoes
 
-predict_series <- function(object, n.ahead) {
+run_model_recursion <- function(object, n.ahead, mode = c("prediction", "simulation"),
+    rescaled = FALSE) {
+
     x <- scale_by_season(object$x)
     scales <- x[[2]]
     x <- x[[1]]
+
+    mode <- match.arg(mode)
+    if (mode == "simulation") {
+        sigma2 <- object$sigma2_norm
+        noises <- rnorm(n.ahead, sd = sqrt(sigma2))
+    } else {
+        noises <- double(n.ahead)
+    }
 
     s <- frequency(x)
     n <- length(x)
@@ -184,12 +194,14 @@ predict_series <- function(object, n.ahead) {
         } else {
             vals <- c(x, head(preds, h - 1))[(t - p):(t - 1)]
         }
-        preds[h] <- sum(object$phis[[m]] * rev(vals), na.rm = TRUE)
+        preds[h] <- sum(object$phis[[m]] * rev(vals), na.rm = TRUE) + noises[h]
     }
 
-    for (h in seq_len(n.ahead)) {
-        m <- cycle(preds)[h]
-        preds[h] <- preds[h] * scales[[2]][m] + scales[[1]][m]
+    if (rescaled) {
+        for (h in seq_len(n.ahead)) {
+            m <- cycle(preds)[h]
+            preds[h] <- preds[h] * scales[[2]][m] + scales[[1]][m]
+        }
     }
 
     preds <- ts(preds, start = end(x) + c(0, 1), frequency = s)

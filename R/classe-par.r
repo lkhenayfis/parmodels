@@ -34,13 +34,17 @@ par <- function(serie, ps = "auto", max_ps = frequency(serie) - 1, metodo = "Yul
     phis <- lapply(seq_len(s), function(m) fit_par(serie, m, ps[m], metodo, max_p = max_ps[m]))
 
     cc <- match.call()
-    new <- new_par(x = serie, phis = phis, sigma2 = NA_real_, residuals = NULL, call = cc)
+    new <- new_par(x = serie, phis = phis, sigma2 = NA_real_, sigma2_norm = NA_real_,
+        residuals = NULL, call = cc)
 
     res <- residuals(new)
     sigma2 <- var(res, na.rm = TRUE)
+    res_norm <- scale_by_season(res)[[1]]
+    sigma2_norm <- var(res_norm, na.rm = TRUE)
 
     new$residuals <- res
     new$sigma2 <- sigma2
+    new$sigma2_norm <- sigma2_norm
 
     return(new)
 }
@@ -78,10 +82,11 @@ fit_par_yulewalker <- function(serie, m, p, max_p, ...) {
 #'     * `residuals`: residuos do modelo
 #'     * `call`: chamada da funcao
 
-new_par <- function(x, phis, sigma2, residuals, call) {
+new_par <- function(x, phis, sigma2, sigma2_norm, residuals, call) {
     new <- list(
         phis = phis,
         sigma2 = sigma2,
+        sigma2_norm = sigma2_norm,
         x = x,
         residuals = residuals,
         call = call
@@ -143,7 +148,26 @@ residuals.par <- function(object, ...) {
 #' @export
 
 predict.par <- function(object, n.ahead, ...) {
-    predict_series(object, n.ahead)
+    run_model_recursion(object, n.ahead)
+}
+
+#' @rdname par_methods
+#' 
+#' @export 
+
+simulate.par <- function(object, n.ahead, nsims, seed = 1234, ...) {
+    set.seed(seed)
+    out <- lapply(seq_len(nsims), function(i) run_model_recursion(object, n.ahead, "simulation"))
+    list2mts(out)
+}
+
+list2mts <- function(list) {
+    names(list) <- paste0("simulation_", seq_along(list))
+    tsp <- tsp(list[[1]])
+    mts <- do.call(cbind, list)
+    mts <- ts(mts)
+    tsp(mts) <- tsp
+    mts
 }
 
 # AUXILIARES ---------------------------------------------------------------------------------------
