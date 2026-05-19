@@ -61,7 +61,7 @@ fit_par_yulewalker <- function(serie, m, p, max_p, ...) {
     serie <- scale_by_season(serie, est = "n")[[1]]
     if (p == "auto") p <- idordem_yulewalker(serie, m, max_p)
     pacf_res <- perpacf(serie, m, p)
-    phis <- pacf_res$phi
+    phis <- as.numeric(solve(pacf_res$RHO, pacf_res$rho))
     return(phis)
 }
 

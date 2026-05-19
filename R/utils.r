@@ -33,6 +33,8 @@ cov2 <- function(x, na.rm = FALSE) {
     (n - 1) / n * cov(x = x, use = use)
 }
 
+wrap_season <- function(k, s) ((k - 1L) %% s) + 1L
+
 split_by_season <- function(serie) {
     seasons <- c(cycle(serie))
     orig_order <- order(unlist(split(seq_along(serie), seasons)))
@@ -166,8 +168,7 @@ filter_series <- function(object) {
 #' 
 #' @return serie temporal contendo as previsoes
 
-run_model_recursion <- function(object, n.ahead, mode = c("prediction", "simulation"),
-    rescaled = FALSE) {
+run_model_recursion <- function(object, n.ahead, mode = c("prediction", "simulation")) {
 
     x <- scale_by_season(object$x)
     scales <- x[[2]]
@@ -197,11 +198,9 @@ run_model_recursion <- function(object, n.ahead, mode = c("prediction", "simulat
         preds[h] <- sum(object$phis[[m]] * rev(vals), na.rm = TRUE) + noises[h]
     }
 
-    if (rescaled) {
-        for (h in seq_len(n.ahead)) {
-            m <- cycle(preds)[h]
-            preds[h] <- preds[h] * scales[[2]][m] + scales[[1]][m]
-        }
+    for (h in seq_len(n.ahead)) {
+        m <- cycle(preds)[h]
+        preds[h] <- preds[h] * scales[[2]][m] + scales[[1]][m]
     }
 
     preds <- ts(preds, start = end(x) + c(0, 1), frequency = s)

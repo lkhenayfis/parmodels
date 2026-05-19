@@ -55,6 +55,7 @@ perpacf <- function(serie, m, lag_max = frequency(serie) - 1, est = c("n", "n-1"
 build_RHO <- function(serie, m, lag_max, est) {
     serie <- ts2matrix(serie)
     N     <- nrow(serie)
+    s     <- ncol(serie)
     fsd   <- ifelse(est == "n-1", sd, sd2)
 
     RHO <- diag(1, lag_max, lag_max)
@@ -62,12 +63,12 @@ build_RHO <- function(serie, m, lag_max, est) {
     for (i in seq_len(lag_max)) {
 
         # Identifica a coluna correspondente ao lag i do mes m
-        col1 <- ifelse((m - i) < 1, m - i + 12, m - i)
+        col1 <- wrap_season(m - i, s)
 
         for (j in seq_len(lag_max)[-seq_len(i)]) {
 
             # Identifica a serie lag
-            col2 <- ifelse((col1 - (j - i)) < 1, col1 - (j - i) + 12, col1 - (j - i))
+            col2 <- wrap_season(col1 - (j - i), s)
 
             if (col1 < col2) {
                 vec1 <- serie[2:N, col1]
@@ -93,12 +94,13 @@ build_RHO <- function(serie, m, lag_max, est) {
 build_rho <- function(serie, m, lag_max, est) {
     serie <- ts2matrix(serie)
     N     <- nrow(serie)
+    s     <- ncol(serie)
     fsd   <- ifelse(est == "n-1", sd, sd2)
 
     rho <- rep(NA_real_, lag_max)
 
-    for (i in 1:lag_max) {
-        col2 <- ifelse((m - i) < 1, m - i + 12, m - i)
+    for (i in seq_len(lag_max)) {
+        col2 <- wrap_season(m - i, s)
 
         if (m < col2) {
             vec1 <- serie[2:N, m]
