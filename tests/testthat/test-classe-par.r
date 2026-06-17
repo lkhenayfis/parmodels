@@ -10,7 +10,7 @@ test_that("new_par", {
     test_that("new_par creates an object of class par", {
         serie <- setup_test_data()
         phis <- list(c(0.5), c(0.3))
-        result <- f(x = serie, phis = phis, sigma2 = 1.5, residuals = NULL, call = quote(par()))
+        result <- f(x = serie, phis = phis, sigma2 = 1.5, sigma2_norm = 1.2, residuals = NULL, call = quote(par()))
         expect_true(inherits(result, "par"))
         expect_true(inherits(result, "list"))
         expect_equal(class(result), c("par", "list"))
@@ -18,9 +18,10 @@ test_that("new_par", {
     test_that("new_par has all required elements", {
         serie <- setup_test_data()
         phis <- list(c(0.5), c(0.3))
-        result <- f(x = serie, phis = phis, sigma2 = 1.5, residuals = NULL, call = quote(par()))
+        result <- f(x = serie, phis = phis, sigma2 = 1.5, sigma2_norm = 1.2, residuals = NULL, call = quote(par()))
         expect_true("phis" %in% names(result))
         expect_true("sigma2" %in% names(result))
+        expect_true("sigma2_norm" %in% names(result))
         expect_true("x" %in% names(result))
         expect_true("residuals" %in% names(result))
         expect_true("call" %in% names(result))
@@ -29,10 +30,13 @@ test_that("new_par", {
         serie <- setup_test_data()
         phis <- list(c(0.5, 0.2), c(0.3))
         sigma2_val <- 1.5
+        sigma2_norm_val <- 1.2
         call_val <- quote(par())
-        result <- f(x = serie, phis = phis, sigma2 = sigma2_val, residuals = NULL, call = call_val)
+        result <- f(x = serie, phis = phis, sigma2 = sigma2_val, sigma2_norm = sigma2_norm_val,
+            residuals = NULL, call = call_val)
         expect_equal(result$phis, phis)
         expect_equal(result$sigma2, sigma2_val)
+        expect_equal(result$sigma2_norm, sigma2_norm_val)
         expect_equal(result$x, serie)
         expect_null(result$residuals)
         expect_equal(result$call, call_val)
@@ -40,14 +44,14 @@ test_that("new_par", {
     test_that("new_par with NULL residuals", {
         serie <- setup_test_data()
         phis <- list(c(0.5))
-        result <- f(x = serie, phis = phis, sigma2 = 1.5, residuals = NULL, call = quote(par()))
+        result <- f(x = serie, phis = phis, sigma2 = 1.5, sigma2_norm = 1.2, residuals = NULL, call = quote(par()))
         expect_null(result$residuals)
     })
     test_that("new_par with actual residuals", {
         serie <- setup_test_data()
         phis <- list(c(0.5))
         resid <- ts(rnorm(length(serie)), start = start(serie), frequency = frequency(serie))
-        result <- f(x = serie, phis = phis, sigma2 = 1.5, residuals = resid, call = quote(par()))
+        result <- f(x = serie, phis = phis, sigma2 = 1.5, sigma2_norm = 1.2, residuals = resid, call = quote(par()))
         expect_equal(result$residuals, resid)
     })
 })
