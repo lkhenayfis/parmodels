@@ -58,7 +58,6 @@ fit_par <- function(serie, m, p, metodo, ...) {
 }
 
 fit_par_yulewalker <- function(serie, m, p, max_p, ...) {
-    serie <- scale_by_season(serie, est = "n")[[1]]
     if (p == "auto") p <- idordem_yulewalker(serie, m, max_p)
     pacf_res <- perpacf(serie, m, p)
     phis <- as.numeric(solve(pacf_res$RHO, pacf_res$rho))
@@ -183,7 +182,6 @@ list2mts <- function(list) {
 #' @return ordem identificada
 
 idordem_yulewalker <- function(serie, m, max_p) {
-    serie <- scale_by_season(serie, est = "n")[[1]]
     phis <- perpacf(serie, m, max_p)
     conf <- qnorm((1 + .95) / 2) / sqrt(phis$n_used)
     over <- abs(phis$phi) >= conf

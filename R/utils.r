@@ -70,6 +70,7 @@ scale_by_season <- function(serie, est = "n", means = NULL, sds = NULL) {
     serie <- unname(unlist(serie)[order0])
 
     attributes(serie) <- attr0
+    class(serie) <- c("detrended_ts", "ts")
 
     out <- list(serie, list(means, sds))
     return(out)

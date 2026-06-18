@@ -2,7 +2,7 @@
 #' 
 #' Calcula a funcao de autocorrelacao parcial periodica (PACF) de uma serie temporal sazonal
 #' 
-#' @param serie serie temporal sazonal
+#' @param serie serie temporal sazonal. Sera padronizada internamente
 #' @param m estacao do ano para a qual calcular a PACF
 #' @param lag_max numero maximo de lags a considerar. Default é frequencia da serie - 1
 #' @param est um de `c("n", "n-1")` indicando qual denominador utilizar para desvio padrao
@@ -19,7 +19,10 @@
 #' @export
 
 perpacf <- function(serie, m, lag_max = frequency(serie) - 1, est = c("n", "n-1"), plot = FALSE) {
+
     est <- match.arg(est)
+
+    if (!inherits(serie, "detrended_ts")) serie <- scale_by_season(serie)[[1]]
 
     RHO <- build_RHO(serie, m, lag_max, est)
     rho <- build_rho(serie, m, lag_max, est)

@@ -171,11 +171,12 @@ test_that("perpacf", {
     })
     test_that("perpacf RHO and rho match helper functions", {
         serie <- setup_test_data()
+        detrended_serie <- scale_by_season(serie)[[1]]
         lag_max <- 5
         m <- 1
         result <- f(serie, m = m, lag_max = lag_max, est = "n", plot = FALSE)
-        expected_RHO <- build_RHO(serie, m = m, lag_max = lag_max, est = "n")
-        expected_rho <- build_rho(serie, m = m, lag_max = lag_max, est = "n")
+        expected_RHO <- build_RHO(detrended_serie, m = m, lag_max = lag_max, est = "n")
+        expected_rho <- build_rho(detrended_serie, m = m, lag_max = lag_max, est = "n")
         expect_equal(result$RHO, expected_RHO)
         expect_equal(result$rho, expected_rho)
     })
