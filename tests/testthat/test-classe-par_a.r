@@ -34,6 +34,34 @@ test_that("par_a methods dispatch by inheritance and reconstruct the series for 
     expect_equal(length(predict(mod, n.ahead = s)), s)
 })
 
+test_that("fit_par_a_yulewalker reproduces CEPEL/GEVAZP coefficients for the Furnas series", {
+    # Golden master: dummyseries[, 2] is the incremental inflow of posto FURNAS, the exact series
+    # fitted by CEPEL's GEVAZP (see exemplo_furnas). With CEPEL's per-month AR orders, the augmented
+    # Yule-Walker fit must reproduce the published phis and the "PARTE A12" psi to printed precision.
+    # Guards the cross-correlation divisor convention (sum / N, not mean over valid pairs).
+    serie   <- setup_test_data()
+    serie_A <- calcula_medias_anuais(serie)
+
+    cep_p   <- c(1, 1, 1, 8, 3, 8, 2, 1, 3, 4, 1, 2)
+    cep_psi <- c(-0.0472, 0.0279, 0.155, -0.318, 0.214, 0.290,
+                  0.0363, 0.118, -0.203, -0.0343, 0.111, 0.140)
+    cep_phi <- list(
+        0.593, 0.490, 0.520,
+        c(0.557, 0.361, 0.132, 0.0633, 0.0576, -0.0794, 0.0104, 0.375),
+        c(0.395, 0.200, 0.202),
+        c(0.562, 0.107, -0.00468, -0.0775, 0.0344, 0.106, -0.0174, -0.216),
+        c(0.523, 0.426), 0.823, c(0.433, 0.255, 0.342),
+        c(0.348, -0.0998, 0.245, 0.372), 0.639, c(0.404, 0.257))
+
+    # CEPEL prints coefficients to ~3 significant figures, so compare on absolute error (relative
+    # tolerance is meaningless for near-zero coefficients such as -0.00468).
+    for (m in seq_len(12)) {
+        fit <- fit_par_a_yulewalker(serie, serie_A, m, cep_p[m], max_p = 11)
+        err <- max(abs(c(fit$phis - cep_phi[[m]], fit$psi - cep_psi[m])))
+        expect_lt(err, 1e-3)
+    }
+})
+
 test_that("fit_par_a_yulewalker returns phis of the requested order plus a scalar psi", {
     serie <- setup_test_data()
     serie_A <- calcula_medias_anuais(serie)

@@ -138,15 +138,25 @@ percacf <- function(serie, m, serie_anual = NULL, lag_max = frequency(serie) - 1
     RHO <- build_RHO_A(serie, serie_anual, m, lag_max, est)
     rho <- build_rho_A(serie, serie_anual, m, lag_max, est)
 
-    # FACP condicional: em cada lag k, ajusta o sistema com os lags 1..k MAIS o termo anual (ultima
-    # linha/coluna) e le o coeficiente do lag k. phi[k] e a autocorrelacao parcial do lag k
-    # condicionada nos lags anteriores e na componente anual.
-    a   <- lag_max + 1
+    # FACP condicional no lag k: correlacao PARCIAL entre Z_t e Z_{t-k}, condicionada nos lags
+    # intermediarios 1..k-1 E na componente anual A. ATENCAO: nao e o coeficiente de regressao
+    # sol[k] do sistema aumentado. No caso classico (sem A) o coeficiente de regressao e a correlacao
+    # parcial coincidem (matriz Toeplitz simetrica, variancias iguais), mas ao condicionar em A eles
+    # divergem: sol[k] = corr_parcial * sqrt((1 - r_{Z_t,A|.}^2)/(1 - r_{Z_{t-k},A|.}^2)). O GEVAZP
+    # imprime/seleciona ordem pela correlacao parcial (limitada a [-1, 1], compativel com a banda
+    # +/- z/sqrt(n)). Montamos a matriz de correlacao aumentada com Z_t como variavel alvo (posicao 1)
+    # e lemos a correlacao parcial alvo<->lag_k via a inversa: -P[i,j]/sqrt(P[i,i] P[j,j]).
+    # (sol[k], o coeficiente de regressao, continua disponivel via solve(RHO, rho) no ajuste.)
+    a  <- lag_max + 1
+    nv <- lag_max + 2                    # alvo Z_t + lags 1..lag_max + A
+    M  <- diag(1, nv, nv)
+    M[1, -1] <- M[-1, 1] <- rho          # alvo vs (lags, A)
+    M[-1, -1] <- RHO                     # bloco (lags, A) entre si
     phi <- double(lag_max)
     for (k in seq_len(lag_max)) {
-        idx    <- c(seq_len(k), a)
-        sol    <- solve(RHO[idx, idx], rho[idx])
-        phi[k] <- sol[k]
+        sel <- c(1L, 1L + c(seq_len(k), a))   # alvo, lags 1..k, A
+        P   <- solve(M[sel, sel])
+        phi[k] <- -P[1, k + 1] / sqrt(P[1, 1] * P[k + 1, k + 1])
     }
 
     percacf <- list(phi = phi, n_used = floor(length(serie) / frequency(serie)),
@@ -187,20 +197,24 @@ build_RHO_A <- function(serie, serie_anual, m, lag_max, est) {
 
     # Borda anual (ultima linha/coluna): rho_{A,k} = corr(A no mes m, Z no lag k), k = 1..lag_max.
     # Mesmo pareamento de build_rho, trocando vec1 pela serie anual no mes m.
+    #
+    # CEPEL/GEVAZP divide a covariancia cruzada Z (x) A pelo numero de ciclos sazonais N (= max das
+    # extensoes das duas series), e *nao* pelo numero de pares validos. Como o primeiro ano de A e
+    # NA (o GEVAZP imprime 0 e o conta no denominador), usar mean(na.rm = TRUE) - i.e. dividir por
+    # N - 1 pares - inflaria todas as correlacoes cruzadas pelo fator N/(N-1). Por isso somamos os
+    # produtos validos e dividimos por N explicitamente. O bloco Z-Z nao sofre disso pois Z e completa.
     for (k in seq_len(lag_max)) {
         col2 <- wrap_season(m - k, s)
 
         if (m < col2) {
             vec1 <- serie_anual[2:N, m]
             vec2 <- serie[1:(N - 1), col2]
-            RHO[a, k] <- 1 / N * sum(vec1 * vec2, na.rm = TRUE) /
-                (fsd(serie_anual[, m], na.rm = TRUE) * fsd(serie[, col2], na.rm = TRUE))
         } else {
             vec1 <- serie_anual[, m]
             vec2 <- serie[, col2]
-            RHO[a, k] <- mean(vec1 * vec2, na.rm = TRUE) /
-                (fsd(vec1, na.rm = TRUE) * fsd(vec2, na.rm = TRUE))
         }
+        RHO[a, k] <- sum(vec1 * vec2, na.rm = TRUE) / N /
+            (fsd(serie_anual[, m], na.rm = TRUE) * fsd(serie[, col2], na.rm = TRUE))
         RHO[k, a] <- RHO[a, k]
     }
     # canto rho_AA = 1 ja vem de diag()
@@ -214,10 +228,12 @@ build_rho_A <- function(serie, serie_anual, m, lag_max, est) {
     rho_zz      <- build_rho(serie, m, lag_max, est)
     serie       <- ts2matrix(serie)
     serie_anual <- ts2matrix(serie_anual)
+    N           <- nrow(serie)
     fsd         <- ifelse(est == "n-1", sd, sd2)
 
     # rho_{A,0} = corr(A no mes m, Z no mes m) na mesma posicao (lag 0); ultima entrada do RHS.
-    rho_A0 <- mean(serie_anual[, m] * serie[, m], na.rm = TRUE) /
+    # Divisor N (e nao o numero de pares validos) pela mesma convencao CEPEL de build_RHO_A.
+    rho_A0 <- sum(serie_anual[, m] * serie[, m], na.rm = TRUE) / N /
         (fsd(serie_anual[, m], na.rm = TRUE) * fsd(serie[, m], na.rm = TRUE))
 
     return(c(rho_zz, rho_A0))
