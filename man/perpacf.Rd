@@ -13,7 +13,7 @@ perpacf(
 )
 }
 \arguments{
-\item{serie}{serie temporal sazonal}
+\item{serie}{serie temporal sazonal. Sera padronizada internamente}
 
 \item{m}{estacao do ano para a qual calcular a PACF}
 

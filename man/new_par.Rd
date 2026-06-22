@@ -4,7 +4,7 @@
 \alias{new_par}
 \title{Construtor Interno De \code{par}}
 \usage{
-new_par(x, phis, sigma2, residuals, call)
+new_par(x, phis, sigma2, sigma2_norm, residuals, call)
 }
 \arguments{
 \item{x}{serie temporal utilizada na estimacao}

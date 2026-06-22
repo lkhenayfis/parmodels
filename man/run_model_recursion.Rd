@@ -4,7 +4,7 @@
 \alias{run_model_recursion}
 \title{Previsao Com Modelo PAR}
 \usage{
-run_model_recursion(object, n.ahead)
+run_model_recursion(object, n.ahead, mode = c("prediction", "simulation"))
 }
 \arguments{
 \item{object}{objeto da classe \code{par} contendo o modelo ajustado}

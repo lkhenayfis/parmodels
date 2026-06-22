@@ -5,6 +5,7 @@
 \alias{fitted.values.par}
 \alias{residuals.par}
 \alias{predict.par}
+\alias{simulate.par}
 \title{Metodos De Modelos \code{par}}
 \usage{
 \method{fitted}{par}(object, ...)
@@ -14,6 +15,8 @@
 \method{residuals}{par}(object, ...)
 
 \method{predict}{par}(object, n.ahead, ...)
+
+\method{simulate}{par}(object, n.ahead, nsims, seed = 1234, ...)
 }
 \arguments{
 \item{object}{objeto da classe \code{par} contendo o modelo ajustado}
