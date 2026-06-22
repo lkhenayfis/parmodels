@@ -22,6 +22,10 @@ plot.periodic_pacf <- function(x, ...) {
     abline(h = c(-conf, conf), lty = 2, col = "blue")
 }
 
+#' @export 
+
+plot.periodic_cacf <- function(x, ...) plot.periodic_pacf(x, ...)
+
 #' @export
 
 plot_simulation <- function(simul, predicted = NULL, ref = NULL) {

@@ -214,3 +214,16 @@ run_model_recursion <- function(object, n.ahead, mode = c("prediction", "simulat
 
     return(preds)
 }
+
+#' Calcula Medias Anuais
+#' 
+#' Retorna `ts` das medias relativas ao ciclo sazonal completo antecedente a cada observacao
+
+calcula_medias_anuais <- function(serie) {
+    # a forma como filter funciona ancora o resultado em t
+    # ex: para serie mensal, o valor de media movel na posicao i e calculado com i ate i-11
+    # o certo e i-1 ate i-12, portanto o zero extra
+    freq <- frequency(serie)
+    weights <- c(0, rep(1 / freq, freq))
+    filter(serie, weights, "convolution", sides = 1)
+}

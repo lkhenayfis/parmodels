@@ -181,3 +181,48 @@ test_that("perpacf", {
         expect_equal(result$rho, expected_rho)
     })
 })
+
+test_that("build_RHO_A augments build_RHO with the annual border (A last)", {
+    serie <- setup_test_data()
+    ss <- scale_by_season(serie, est = "n")[[1]]
+    sa <- scale_by_season(calcula_medias_anuais(serie), est = "n")[[1]]
+    lag_max <- 4
+    m <- 3
+    RA <- build_RHO_A(ss, sa, m, lag_max, "n")
+    expect_equal(dim(RA), c(lag_max + 1, lag_max + 1))
+    expect_equal(RA[seq_len(lag_max), seq_len(lag_max)], build_RHO(ss, m, lag_max, "n"))
+    expect_equal(RA, t(RA))
+    expect_equal(RA[lag_max + 1, lag_max + 1], 1)
+    expect_true(all(is.finite(RA)))
+})
+
+test_that("build_rho_A appends rho_A0 to build_rho (A last)", {
+    serie <- setup_test_data()
+    ss <- scale_by_season(serie, est = "n")[[1]]
+    sa <- scale_by_season(calcula_medias_anuais(serie), est = "n")[[1]]
+    lag_max <- 4
+    m <- 3
+    rA <- build_rho_A(ss, sa, m, lag_max, "n")
+    expect_equal(length(rA), lag_max + 1)
+    expect_equal(rA[seq_len(lag_max)], build_rho(ss, m, lag_max, "n"))
+    expect_true(all(is.finite(rA)))
+})
+
+test_that("percacf returns a full conditional FACP (first lag filled)", {
+    serie <- setup_test_data()
+    lag_max <- 6
+    m <- 3
+    cc <- percacf(serie, m, lag_max = lag_max, est = "n")
+    expect_equal(length(cc$phi), lag_max)
+    expect_true(all(is.finite(cc$phi)))
+    expect_true(cc$phi[1] != 0)
+})
+
+test_that("percacf conditional FACP differs from the ordinary perpacf", {
+    serie <- setup_test_data()
+    lag_max <- 6
+    m <- 3
+    cc <- percacf(serie, m, lag_max = lag_max, est = "n")
+    pp <- perpacf(scale_by_season(serie, est = "n")[[1]], m, lag_max)
+    expect_false(isTRUE(all.equal(cc$phi, pp$phi)))
+})
