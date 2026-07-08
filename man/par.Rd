@@ -19,7 +19,8 @@ automatica}
 \value{
 objeto da classe \code{par}, uma lista contendo os seguintes elementos:
 * \code{phis}: lista contendo os coeficientes de cada modelo autorregressivo periodico
-* \code{sigma2}: variancia dos residuos do modelo
+* \code{sigma2}: vetor de comprimento igual a frequencia sazonal com a variancia (escala bruta) da
+inovacao de cada estacao, calculada em forma fechada via Yule-Walker
 * \code{x}: serie temporal utilizada na estimacao
 * \code{call}: chamada da funcao
 }

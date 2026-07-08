@@ -11,7 +11,11 @@ new_par(x, phis, sigma2, sigma2_norm, residuals, call)
 
 \item{phis}{lista contendo os coeficientes de cada modelo autorregressivo periodico}
 
-\item{sigma2}{variancia dos residuos do modelo}
+\item{sigma2}{vetor de comprimento igual a frequencia sazonal com a variancia (escala bruta) da
+inovacao de cada estacao}
+
+\item{sigma2_norm}{vetor de comprimento igual a frequencia sazonal com a variancia da inovacao
+de cada estacao na escala normalizada sazonalmente}
 
 \item{residuals}{residuos do modelo}
 
@@ -20,7 +24,9 @@ new_par(x, phis, sigma2, sigma2_norm, residuals, call)
 \value{
 objeto da classe \code{par}, uma lista contendo os seguintes elementos:
 * \code{phis}: lista contendo os coeficientes de cada modelo autorregressivo periodico
-* \code{sigma2}: variancia dos residuos do modelo
+* \code{sigma2}: vetor de comprimento igual a frequencia sazonal com a variancia (escala bruta)
+da inovacao de cada estacao
+* \code{sigma2_norm}: idem, na escala normalizada sazonalmente
 * \code{x}: serie temporal utilizada na estimacao
 * \code{residuals}: residuos do modelo
 * \code{call}: chamada da funcao

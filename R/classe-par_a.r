@@ -47,19 +47,18 @@ par_a <- function(serie, ps = "auto", max_ps = frequency(serie) - 1, metodo = "Y
     phis <- lapply(seq_len(s),
         function(m) unfold_par_a(fits[[m]]$phis, fits[[m]]$psi, sds, sdsA, m, s))
 
+    sigma2_norm <- vapply(fits, function(f) f$sigma2_norm, numeric(1))
+    sigma2      <- sigma2_norm * sds^2
+
     cc  <- match.call()
-    new <- new_par(x = serie, phis = phis, sigma2 = NA_real_, sigma2_norm = NA_real_,
+    new <- new_par(x = serie, phis = phis, sigma2 = sigma2, sigma2_norm = sigma2_norm,
         residuals = NULL, call = cc)
     class(new) <- c("par_a", "par", "list")
     new$psi    <- vapply(fits, function(f) f$psi, numeric(1))
     new$ps     <- vapply(fits, function(f) length(f$phis), integer(1))
     new$annual <- serie_A
 
-    res         <- residuals(new)
-    res_norm    <- scale_by_season(res)[[1]]
-    new$residuals   <- res
-    new$sigma2      <- var(res, na.rm = TRUE)
-    new$sigma2_norm <- var(res_norm, na.rm = TRUE)
+    new$residuals <- residuals(new)
 
     return(new)
 }
@@ -76,7 +75,8 @@ par_a <- function(serie, ps = "auto", max_ps = frequency(serie) - 1, metodo = "Y
 #' @param max_p ordem maxima na identificacao automatica
 #' @param ... demais argumentos repassados ao metodo
 #'
-#' @return lista com `phis` (coeficientes autorregressivos) e `psi` (coeficiente anual)
+#' @return lista com `phis` (coeficientes autorregressivos), `psi` (coeficiente anual) e
+#'     `sigma2_norm` (variancia da inovacao na escala normalizada sazonalmente)
 #'
 #' @rdname fit_par_a
 
@@ -94,7 +94,8 @@ fit_par_a_yulewalker <- function(serie, serie_A, m, p, max_p, ...) {
     if (p == "auto") p <- idordem_cacf(serie, serie_A, m, max_p)
     cacf <- percacf(serie, m, serie_A, lag_max = p, est = "n")
     sol  <- as.numeric(solve(cacf$RHO, cacf$rho))
-    list(phis = sol[seq_len(p)], psi = sol[[p + 1]])
+    sigma2_norm <- 1 - sum(sol * cacf$rho)
+    list(phis = sol[seq_len(p)], psi = sol[[p + 1]], sigma2_norm = sigma2_norm)
 }
 
 #' Identificacao Automatica De Ordem De Modelos `par_a`

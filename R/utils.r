@@ -175,14 +175,6 @@ run_model_recursion <- function(object, n.ahead, mode = c("prediction", "simulat
     scales <- x[[2]]
     x <- x[[1]]
 
-    mode <- match.arg(mode)
-    if (mode == "simulation") {
-        sigma2 <- object$sigma2_norm
-        noises <- rnorm(n.ahead, sd = sqrt(sigma2))
-    } else {
-        noises <- double(n.ahead)
-    }
-
     s <- frequency(x)
     n <- length(x)
 
@@ -192,6 +184,14 @@ run_model_recursion <- function(object, n.ahead, mode = c("prediction", "simulat
     aux <- ts(rep(NA_real_, n.ahead), start = end(x) + c(0, 1), frequency = s)
     preds <- as.numeric(aux)
     cycles <- cycle(aux)
+
+    mode <- match.arg(mode)
+    if (mode == "simulation") {
+        sigma2 <- object$sigma2_norm[cycles]
+        noises <- rnorm(n.ahead, sd = sqrt(sigma2))
+    } else {
+        noises <- double(n.ahead)
+    }
 
     for (h in seq_len(n.ahead)) {
         t <- n + h

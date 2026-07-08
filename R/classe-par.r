@@ -17,10 +17,11 @@
 #' 
 #' @return objeto da classe `par`, uma lista contendo os seguintes elementos:
 #'     * `phis`: lista contendo os coeficientes de cada modelo autorregressivo periodico
-#'     * `sigma2`: variancia dos residuos do modelo
+#'     * `sigma2`: vetor de comprimento igual a frequencia sazonal com a variancia (escala bruta) da
+#'       inovacao de cada estacao, calculada em forma fechada via Yule-Walker
 #'     * `x`: serie temporal utilizada na estimacao
 #'     * `call`: chamada da funcao
-#' 
+#'
 #' @export
 
 par <- function(serie, ps = "auto", max_ps = frequency(serie) - 1, metodo = "YuleWalker") {
@@ -31,20 +32,18 @@ par <- function(serie, ps = "auto", max_ps = frequency(serie) - 1, metodo = "Yul
     if (length(ps) < s) ps <- rep(ps, length.out = s)
     if (length(max_ps) < s) max_ps <- rep(max_ps, length.out = s)
 
-    phis <- lapply(seq_len(s), function(m) fit_par(serie, m, ps[m], metodo, max_p = max_ps[m]))
+    fits <- lapply(seq_len(s), function(m) fit_par(serie, m, ps[m], metodo, max_p = max_ps[m]))
+    phis <- lapply(fits, function(f) f$phis)
+    sigma2_norm <- vapply(fits, function(f) f$sigma2_norm, numeric(1))
+
+    sds <- seasonal_sd(serie, est = "n")
+    sigma2 <- sigma2_norm * sds^2
 
     cc <- match.call()
-    new <- new_par(x = serie, phis = phis, sigma2 = NA_real_, sigma2_norm = NA_real_,
+    new <- new_par(x = serie, phis = phis, sigma2 = sigma2, sigma2_norm = sigma2_norm,
         residuals = NULL, call = cc)
 
-    res <- residuals(new)
-    sigma2 <- var(res, na.rm = TRUE)
-    res_norm <- scale_by_season(res)[[1]]
-    sigma2_norm <- var(res_norm, na.rm = TRUE)
-
-    new$residuals <- res
-    new$sigma2 <- sigma2
-    new$sigma2_norm <- sigma2_norm
+    new$residuals <- residuals(new)
 
     return(new)
 }
@@ -57,11 +56,29 @@ fit_par <- function(serie, m, p, metodo, ...) {
     return(fit)
 }
 
+#' Ajuste Por Estacao De `par`
+#'
+#' Funcao interna de ajuste de Yule-Walker para uma unica estacao
+#'
+#' Alem dos coeficientes autorregressivos, calcula em forma fechada a variancia da inovacao na
+#' escala normalizada sazonalmente: `sigma2_norm = 1 - sum(phis * rho)`, onde `rho` e o vetor de
+#' correlacoes do lado direito do sistema de Yule-Walker (ver [perpacf()]).
+#'
+#' @param serie serie temporal sazonal (bruta)
+#' @param m estacao do ano a ajustar
+#' @param p ordem autorregressiva, ou `"auto"` para identificacao automatica
+#' @param max_p ordem maxima na identificacao automatica
+#' @param ... demais argumentos repassados ao metodo
+#'
+#' @return lista com `phis` (coeficientes autorregressivos) e `sigma2_norm` (variancia da inovacao
+#'     na escala normalizada sazonalmente)
+
 fit_par_yulewalker <- function(serie, m, p, max_p, ...) {
     if (p == "auto") p <- idordem_yulewalker(serie, m, max_p)
     pacf_res <- perpacf(serie, m, p)
     phis <- as.numeric(solve(pacf_res$RHO, pacf_res$rho))
-    return(phis)
+    sigma2_norm <- 1 - sum(phis * pacf_res$rho)
+    list(phis = phis, sigma2_norm = sigma2_norm)
 }
 
 #' Construtor Interno De `par`
@@ -70,13 +87,18 @@ fit_par_yulewalker <- function(serie, m, p, max_p, ...) {
 #' 
 #' @param x serie temporal utilizada na estimacao
 #' @param phis lista contendo os coeficientes de cada modelo autorregressivo periodico
-#' @param sigma2 variancia dos residuos do modelo
+#' @param sigma2 vetor de comprimento igual a frequencia sazonal com a variancia (escala bruta) da
+#'     inovacao de cada estacao
+#' @param sigma2_norm vetor de comprimento igual a frequencia sazonal com a variancia da inovacao
+#'     de cada estacao na escala normalizada sazonalmente
 #' @param residuals residuos do modelo
 #' @param call chamada da funcao
-#' 
+#'
 #' @return objeto da classe `par`, uma lista contendo os seguintes elementos:
 #'     * `phis`: lista contendo os coeficientes de cada modelo autorregressivo periodico
-#'     * `sigma2`: variancia dos residuos do modelo
+#'     * `sigma2`: vetor de comprimento igual a frequencia sazonal com a variancia (escala bruta)
+#'       da inovacao de cada estacao
+#'     * `sigma2_norm`: idem, na escala normalizada sazonalmente
 #'     * `x`: serie temporal utilizada na estimacao
 #'     * `residuals`: residuos do modelo
 #'     * `call`: chamada da funcao

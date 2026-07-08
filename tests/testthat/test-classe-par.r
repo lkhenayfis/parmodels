@@ -149,13 +149,24 @@ test_that("par", {
         expect_true(all(sapply(result$phis, is.numeric)))
         expect_true(all(sapply(result$phis, function(x) is.vector(x) || is.null(x))))
     })
-    test_that("par sigma2 is a single numeric value > 0", {
+    test_that("par sigma2 is a per-season numeric vector > 0", {
         serie <- setup_test_data()
         serie_subset <- window(serie, start = c(1990, 1), end = c(1995, 12))
         result <- f(serie_subset, ps = 2, metodo = "YuleWalker")
         expect_true(is.numeric(result$sigma2))
-        expect_equal(length(result$sigma2), 1)
-        expect_true(result$sigma2 > 0)
+        expect_equal(length(result$sigma2), frequency(serie_subset))
+        expect_true(all(result$sigma2 > 0))
+    })
+    test_that("par sigma2_norm matches the closed-form Yule-Walker innovation variance", {
+        serie <- setup_test_data()
+        serie_subset <- window(serie, start = c(1990, 1), end = c(1995, 12))
+        result <- f(serie_subset, ps = 2, metodo = "YuleWalker")
+        s <- frequency(serie_subset)
+        for (m in seq_len(s)) {
+            pacf_res <- perpacf(serie_subset, m, 2)
+            expected <- 1 - sum(result$phis[[m]] * pacf_res$rho)
+            expect_equal(result$sigma2_norm[m], expected, tolerance = 1e-10)
+        }
     })
     test_that("par residuals are calculated and stored", {
         serie <- setup_test_data()

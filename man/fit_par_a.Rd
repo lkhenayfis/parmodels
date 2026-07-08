@@ -25,7 +25,8 @@ fit_par_a_yulewalker(serie, serie_A, m, p, max_p, ...)
 \item{max_p}{ordem maxima na identificacao automatica}
 }
 \value{
-lista com \code{phis} (coeficientes autorregressivos) e \code{psi} (coeficiente anual)
+lista com \code{phis} (coeficientes autorregressivos), \code{psi} (coeficiente anual) e
+\code{sigma2_norm} (variancia da inovacao na escala normalizada sazonalmente)
 }
 \description{
 Funcoes internas para ajuste do modelo periodico anual de uma unica estacao
