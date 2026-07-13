@@ -16,7 +16,7 @@
 
 \method{predict}{par}(object, n.ahead, ...)
 
-\method{simulate}{par}(object, n.ahead, nsims, seed = 1234, ...)
+\method{simulate}{par}(object, nsim, seed = 1234, n.ahead = 1, ...)
 }
 \arguments{
 \item{object}{objeto da classe \code{par} contendo o modelo ajustado}
@@ -24,6 +24,10 @@
 \item{...}{argumentos adicionais}
 
 \item{n.ahead}{numero de passos a frente a serem previstos}
+
+\item{nsim}{inteiro, numero de simulacoes a realizar}
+
+\item{seed}{semente para simulacao}
 }
 \value{
 varios, dependendo do metodo

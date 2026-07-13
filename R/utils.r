@@ -166,6 +166,8 @@ filter_series <- function(object) {
 #' 
 #' @param object objeto da classe `par` contendo o modelo ajustado
 #' @param n.ahead numero de periodos a serem previstos
+#' @param mode string, um de `c("prediction", "simulation")` indicando o modo de execucao das
+#'     recursoes
 #' 
 #' @return serie temporal contendo as previsoes
 
@@ -218,6 +220,12 @@ run_model_recursion <- function(object, n.ahead, mode = c("prediction", "simulat
 #' Calcula Medias Anuais
 #' 
 #' Retorna `ts` das medias relativas ao ciclo sazonal completo antecedente a cada observacao
+#' 
+#' Cada elemento da serie retornada `A_t` corresponde a `mean(serie_{t-12}:serie_{t-1})`
+#' 
+#' @param serie serie temporal cujas medias se deseja calcular
+#' 
+#' @return serie temporal de mesmo comprimento de `serie` contendo as medias calculadas
 
 calcula_medias_anuais <- function(serie) {
     # a forma como filter funciona ancora o resultado em t

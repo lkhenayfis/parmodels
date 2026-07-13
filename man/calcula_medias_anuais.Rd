@@ -6,6 +6,15 @@
 \usage{
 calcula_medias_anuais(serie)
 }
+\arguments{
+\item{serie}{serie temporal cujas medias se deseja calcular}
+}
+\value{
+serie temporal de mesmo comprimento de \code{serie} contendo as medias calculadas
+}
 \description{
 Retorna \code{ts} das medias relativas ao ciclo sazonal completo antecedente a cada observacao
+}
+\details{
+Cada elemento da serie retornada \code{A_t} corresponde a \verb{mean(serie_\{t-12\}:serie_\{t-1\})}
 }

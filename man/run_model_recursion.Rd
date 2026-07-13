@@ -10,6 +10,9 @@ run_model_recursion(object, n.ahead, mode = c("prediction", "simulation"))
 \item{object}{objeto da classe \code{par} contendo o modelo ajustado}
 
 \item{n.ahead}{numero de periodos a serem previstos}
+
+\item{mode}{string, um de \code{c("prediction", "simulation")} indicando o modo de execucao das
+recursoes}
 }
 \value{
 serie temporal contendo as previsoes

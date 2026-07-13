@@ -7,6 +7,8 @@
 #' 
 #' @return nenhum, apenas plota o grafico
 #' 
+#' @importFrom graphics title lines abline
+#' 
 #' @export
 
 plot.periodic_pacf <- function(x, ...) {
@@ -26,6 +28,17 @@ plot.periodic_pacf <- function(x, ...) {
 
 plot.periodic_cacf <- function(x, ...) plot.periodic_pacf(x, ...)
 
+
+#' Plota Simulacao De Modelo `par`
+#' 
+#' Plota grafico combinando todas as simulacoes em `simul`, com verificado opcional por cima
+#' 
+#' @param simul saida de uma chamada de `simulate`
+#' @param predicted opcional, serie temporal de previsao a ser plotada como referencia
+#' @param ref opcional, serie temporal de observado a ser plotada como referencia
+#' 
+#' @return nao ha retorno, apenas print do plot R base
+#' 
 #' @export
 
 plot_simulation <- function(simul, predicted = NULL, ref = NULL) {

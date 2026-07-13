@@ -2,3 +2,6 @@
 ^data-raw$
 ^informals$
 ^README\.Rmd$
+^.claude$
+^plans$
+^exemplo_furnas$

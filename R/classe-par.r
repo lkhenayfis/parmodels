@@ -124,6 +124,8 @@ new_par <- function(x, phis, sigma2, sigma2_norm, residuals, call) {
 #' 
 #' @param object objeto da classe `par` contendo o modelo ajustado
 #' @param n.ahead numero de passos a frente a serem previstos
+#' @param nsim inteiro, numero de simulacoes a realizar
+#' @param seed semente para simulacao
 #' @param ... argumentos adicionais
 #' 
 #' @return varios, dependendo do metodo
@@ -176,9 +178,9 @@ predict.par <- function(object, n.ahead, ...) {
 #' 
 #' @export 
 
-simulate.par <- function(object, n.ahead, nsims, seed = 1234, ...) {
+simulate.par <- function(object, nsim, seed = 1234, n.ahead = 1, ...) {
     set.seed(seed)
-    out <- lapply(seq_len(nsims), function(i) run_model_recursion(object, n.ahead, "simulation"))
+    out <- lapply(seq_len(nsim), function(i) run_model_recursion(object, n.ahead, "simulation"))
     list2mts(out)
 }
 
