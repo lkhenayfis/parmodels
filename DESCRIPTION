@@ -1,6 +1,6 @@
 Package: parmodels
 Title: Conjunto de funcionalidades para estimacao e uso de modelos autorregressivos periodicos
-Version: 0.1
+Version: 0.1.0.9000
 Authors@R: 
     person("Lucas", "Khenayfis", , "lucaskhenayfis@gmail.com", role = c("aut", "cre"))
 Description: Este pacote contem toda a funcionalidade necessaria para estimacao, incluindo selecao
