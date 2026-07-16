@@ -250,8 +250,8 @@ test_that("pad_series", {
         serie <- setup_test_data()
         serie_subset <- window(serie, start = c(1931, 5), end = c(1933, 8))
         result <- f(serie_subset, pad = 0)
-        expect_equal(result[1:4], rep(0, 4))
-        expect_equal(tail(result, 4), rep(0, 4))
+        expect_equal(as.numeric(result[1:4]), rep(0, 4))
+        expect_equal(as.numeric(tail(result, 4)), rep(0, 4))
     })
     test_that("pad_series preserves frequency", {
         serie <- setup_test_data()
