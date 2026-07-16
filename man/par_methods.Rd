@@ -16,7 +16,7 @@
 
 \method{predict}{par}(object, n.ahead, ...)
 
-\method{simulate}{par}(object, nsim, seed = 1234, n.ahead = 1, ...)
+\method{simulate}{par}(object, nsim, seed, n.ahead = 1, ...)
 }
 \arguments{
 \item{object}{objeto da classe \code{par} contendo o modelo ajustado}
