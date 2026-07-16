@@ -178,8 +178,8 @@ predict.par <- function(object, n.ahead, ...) {
 #' 
 #' @export 
 
-simulate.par <- function(object, nsim, seed = 1234, n.ahead = 1, ...) {
-    set.seed(seed)
+simulate.par <- function(object, nsim, seed, n.ahead = 1, ...) {
+    if (exists("seed")) set.seed(seed)
     out <- lapply(seq_len(nsim), function(i) run_model_recursion(object, n.ahead, "simulation"))
     list2mts(out)
 }
